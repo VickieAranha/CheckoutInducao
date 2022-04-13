@@ -17,21 +17,26 @@ import java.util.List;
 
 public class PreferenceTools {
   Logger log = LoggerFactory.getLogger(PreferenceTools.class);
-  public  String updatePreference(String id, PreferenceRequest pref) throws MPException, MPApiException {
-    MercadoPagoConfig.setAccessToken(Autentication.getToken());
+
+  public PreferenceTools() {
+    Autentication.setup();
+  }
+
+  public String updatePreference(String id, PreferenceRequest pref) throws MPException, MPApiException {
+
     Preference result = new PreferenceClient().update(id, pref);
     return new Gson().toJson(result);
   }
 
-  public  String createPreference() throws MPException, MPApiException {
+  public String createPreference() throws MPException, MPApiException {
     MercadoPagoConfig.setAccessToken(Autentication.getToken());
     List<PreferenceItemRequest> items = addItems();
     PreferenceRequest request = PreferenceRequest.builder().items(items).build();
-    Preference result =  new PreferenceClient().create(request);
+    Preference result = new PreferenceClient().create(request);
     return new Gson().toJson(result);
   }
 
-  public  List<PreferenceItemRequest> addItems() {
+  public List<PreferenceItemRequest> addItems() {
     List<PreferenceItemRequest> items = new ArrayList<>();
     PreferenceItemRequest item =
         PreferenceItemRequest.builder()
