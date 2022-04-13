@@ -36,6 +36,7 @@ public class PaymentTools {
     try {
       result = client.create(paymentCreateRequest);
     } catch (Exception e) {
+      log.error(((MPApiException) e).getApiResponse().getContent());
       return "Error in payment create request :" + ((MPApiException) e).getApiResponse().getContent();
     }
     return new Gson().toJson(result);
