@@ -15,6 +15,9 @@ import static spark.Spark.*;
 public class Routes {
   private static final Logger log = LoggerFactory.getLogger(Routes.class);
   public void init() {
+    after((req,res )-> {
+      res.type("application/json;charset=UTF-8");
+    } );
     path("Payment", () -> {
       get("/MethodAllowed", (req, res) -> new PaymentTools().getAllPaymentsMethods());
       get("/:id", (req, res) -> new PaymentTools().createPayment(req.params(":id")));
