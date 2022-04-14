@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.mercadopago.client.common.IdentificationRequest;
 import com.mercadopago.client.merchantorder.MerchantOrderClient;
 import com.mercadopago.client.merchantorder.MerchantOrderCreateRequest;
+import com.mercadopago.client.payment.PaymentAdditionalInfoRequest;
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.payment.PaymentCreateRequest;
 import com.mercadopago.client.payment.PaymentOrderRequest;
@@ -17,7 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -28,7 +30,7 @@ public class PaymentTools {
     Autentication.setup();
   }
 
-  public String createPayment(String prefId) throws MPException, MPApiException {
+  public String createPayment(String prefId) throws MPException, MPApiException, UnknownHostException {
     PaymentClient client = new PaymentClient();
     Payment result = new Payment();
     PaymentCreateRequest paymentCreateRequest = fillObject(prefId);
@@ -72,37 +74,39 @@ public class PaymentTools {
   }
 
   public String getAllPaymentsMethods() throws MPException, MPApiException {
-
     PaymentMethodClient client = new PaymentMethodClient();
     return new Gson().toJson(client.list().getResults());
   }
 
-  public PaymentCreateRequest fillObject(String prefId) throws MPException, MPApiException {
+  public PaymentCreateRequest fillObject(String prefId) throws MPException, MPApiException, UnknownHostException {
     MerchantOrderClient moClient = new MerchantOrderClient();
     MerchantOrder merchantOrder;
     merchantOrder = moClient.create(MerchantOrderCreateRequest.builder().preferenceId(prefId).build());
 
     PaymentCreateRequest obj =  PaymentCreateRequest.builder()
-        .dateOfExpiration(OffsetDateTime.now())
         .statementDescriptor("compras mercadopago")
-        .paymentMethodOptionId("bolbradesco")
-        .paymentMethodId("ticket")
+        .paymentMethodId("bolbradesco")
+        .installments(1)
         .transactionAmount(new BigDecimal("290"))
         .payer(
             PaymentPayerRequest.builder()
                 .firstName("Gabriela")
                 .lastName("bertoluzo")
+                .email("fpizzicol@gmail.com")
                 .identification(
                     IdentificationRequest.builder()
                         .type("CPF")
                         .number("22438306041").build())
                 .build())
+
         .order(
             PaymentOrderRequest.builder()
                 .type("mercadopago")
                 .id(merchantOrder.getId()
                 ).build()
-        ).build();
+        )
+        .build();
+
     return obj;
 
   }
