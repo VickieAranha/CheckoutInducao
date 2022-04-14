@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -38,7 +37,7 @@ public class PaymentTools {
     try {
       result = client.create(paymentCreateRequest);
     } catch (MPApiException e) {
-      log.error( e.getApiResponse().getContent());
+      log.error(e.getApiResponse().getContent());
       return "Error in payment create request :" + e.getApiResponse().getContent();
     }
     return new Gson().toJson(result);
@@ -83,7 +82,7 @@ public class PaymentTools {
     MerchantOrder merchantOrder;
     merchantOrder = moClient.create(MerchantOrderCreateRequest.builder().preferenceId(prefId).build());
 
-    PaymentCreateRequest obj =  PaymentCreateRequest.builder()
+    PaymentCreateRequest obj = PaymentCreateRequest.builder()
         .statementDescriptor("compras mercadopago")
         .paymentMethodId("bolbradesco")
         .installments(1)

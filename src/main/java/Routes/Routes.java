@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import static spark.Spark.*;
 
 public class Routes {
+  private static final Logger log = LoggerFactory.getLogger(Routes.class);
   public void init() {
-    Logger log = LoggerFactory.getLogger(Routes.class);
     path("Payment", () -> {
       get("/MethodAllowed", (req, res) -> new PaymentTools().getAllPaymentsMethods());
       get("/:id", (req, res) -> new PaymentTools().createPayment(req.params(":id")));
@@ -28,16 +28,17 @@ public class Routes {
 
     exception(MPException.class, (e, req, res) ->
     {
-      //TODO: criar responseApi para mapear retornos de erros
-      log.error(e.fillInStackTrace().getMessage());
+      logError(e);
     });
     exception(MPApiException.class, (e, req, res) ->
     {
-      //TODO: criar responseApi para mapear retornos de erros
-      log.error(e.fillInStackTrace().getMessage());
+      logError(e);
     });
-    /*exception(Exception.class, (e, req, res) ->
-        log.error(e.getMessage()));*/
+
+
+  }
+  public void logError(Exception e){
+    log.error("Erro imprevisto: " , e);
   }
 }
 
